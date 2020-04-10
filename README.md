@@ -1,3 +1,3 @@
 # HW1_mobile
 
-my weathering project
+my weather forecast project
