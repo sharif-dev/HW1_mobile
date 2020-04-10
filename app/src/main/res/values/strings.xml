@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Test</string>
+    <string name="latitude_text">latitude:</string>
+    <string name="longitude_text">longitude:</string>
+    <string name="main_activity_title">Search For Place Name</string>
+    <string name="weather_activity_title">Weather Forecast</string>
+</resources>
