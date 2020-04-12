@@ -12,9 +12,13 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -31,6 +35,7 @@ public class WeatherForecastActivity extends AppCompatActivity {
     final String DarkSkyToken = "a6b8c7b90a261e493e22279291026462";
     public static final int SEND_QUERY = 0;
     public static final int SHOW_LIST = 1;
+    public static final int ERROR = 2;
 
     ExecutorService executorService;
 
@@ -87,6 +92,11 @@ public class WeatherForecastActivity extends AppCompatActivity {
 
                         break;
 
+                    case ERROR:
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Toast.makeText(getApplicationContext(), (String) msg.obj, Toast.LENGTH_SHORT).show();
+                        break;
+
                 }
             }
         };
@@ -118,7 +128,20 @@ public class WeatherForecastActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                Message msg = new Message();
+                msg.what = ERROR;
+
+                if (error instanceof TimeoutError || error instanceof NoConnectionError){
+                    msg.obj = "check your internet connection";
+                } else if (error instanceof ServerError){
+                    msg.obj = "there was a problem with server, please try again later";
+                } else if (error instanceof NetworkError){
+                    msg.obj = "there was a problem with network, please try again later";
+                } else {
+                    msg.obj = "unknown error occurred, please try again later";
+                }
+
+                queryHandler.sendMessage(msg);
             }
         });
 
